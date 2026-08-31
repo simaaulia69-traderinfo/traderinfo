@@ -6,7 +6,7 @@ import { createBrowserSupabaseClient } from "@/lib/supabase";
 
 export default function AdminLoginPage() {
   const router = useRouter();
-  const [email, setEmail] = useState("simaaulia69@gmail.com");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -66,6 +66,7 @@ export default function AdminLoginPage() {
             <label className="mb-2 block text-sm font-semibold text-slate-700">Email</label>
             <input
               type="email"
+              autoComplete="username"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-slate-400"
