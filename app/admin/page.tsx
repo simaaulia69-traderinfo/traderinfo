@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import type { Post } from "@/lib/types";
 import { formatDate } from "@/lib/utils";
+import { AdminSettings } from "@/components/admin-settings";
 
 export default function AdminDashboardPage() {
   const router = useRouter();
@@ -55,6 +56,8 @@ export default function AdminDashboardPage() {
           <p className="text-xs uppercase tracking-[0.2em] text-slate-500">Total artikel</p>
           <p className="mt-3 text-3xl font-black text-slate-900">{posts.length}</p>
         </div>
+
+        <AdminSettings />
         <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
           <p className="text-xs uppercase tracking-[0.2em] text-slate-500">Published</p>
           <p className="mt-3 text-3xl font-black text-emerald-600">{posts.filter((post) => post.is_published).length}</p>

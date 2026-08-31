@@ -84,6 +84,23 @@ insert into storage.buckets (id, name, public)
 values ('article-images', 'article-images', true)
 on conflict (id) do update set public = true;
 
+create table if not exists public.site_settings (
+  id integer primary key default 1,
+  google_analytics_id text not null default '',
+  updated_at timestamptz not null default now()
+);
+
+alter table public.site_settings enable row level security;
+drop policy if exists "Public can read site settings" on public.site_settings;
+create policy "Public can read site settings"
+on public.site_settings for select
+to public
+using (true);
+
+insert into public.site_settings (id, google_analytics_id)
+values (1, '')
+on conflict (id) do nothing;
+
 drop policy if exists "Authenticated admins can upload article images" on storage.objects;
 create policy "Authenticated admins can upload article images"
 on storage.objects for insert
