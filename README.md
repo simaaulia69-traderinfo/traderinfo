@@ -47,6 +47,7 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY
 SUPABASE_SERVICE_ROLE_KEY
 NEXT_PUBLIC_SITE_URL
 ADMIN_EMAIL
+NEXT_PUBLIC_GA_MEASUREMENT_ID
 ```
 
 `.env.local` hanya untuk lokal dan di-ignore Git. `SUPABASE_SERVICE_ROLE_KEY` hanya boleh digunakan server/Vercel dan tidak boleh diberi prefix `NEXT_PUBLIC_`.
@@ -125,6 +126,24 @@ npx vercel --prod
 ```
 
 Environment variables harus diatur di Vercel untuk Production, dan Preview/Development bila diperlukan.
+
+## Google Analytics 4
+
+Integrasi GA4 tersedia di `components/google-analytics.tsx` dan hanya aktif jika `NEXT_PUBLIC_GA_MEASUREMENT_ID` diisi. Tanpa Measurement ID, script analytics tidak dirender.
+
+Cara mendapatkan Measurement ID:
+
+1. Buka https://analytics.google.com/ dengan akun Google yang ingin digunakan.
+2. Pilih `Start measuring` atau `Admin` → `Create Property`.
+3. Isi nama property, misalnya `TraderInfo`.
+4. Pilih zona waktu Indonesia dan mata uang Rupiah.
+5. Tambahkan data stream `Web`.
+6. Masukkan `https://traderinfo.my.id` sebagai URL website.
+7. Salin Measurement ID dengan format `G-XXXXXXXXXX`.
+8. Tambahkan `NEXT_PUBLIC_GA_MEASUREMENT_ID` di Vercel Production Environment.
+9. Redeploy project.
+
+Validasi melalui GA4 → `Reports` → `Realtime`, lalu buka website pada tab lain. Penggunaan Google Analytics juga sudah dijelaskan pada halaman Privacy Policy.
 
 ## Keamanan
 

@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 import { SchemaJsonLd } from "@/components/schema-jsonld";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
+import { GoogleAnalytics } from "@/components/google-analytics";
 import { buildWebsiteSchema } from "@/lib/seo";
 import "./globals.css";
 
@@ -40,6 +41,7 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
   return (
     <html lang="id" className={`${inter.variable} h-full`} suppressHydrationWarning>
       <body className="min-h-full bg-slate-50 text-slate-900 antialiased">
+        <GoogleAnalytics />
         <SchemaJsonLd data={buildWebsiteSchema()} />
         <div className="flex min-h-screen flex-col">
           <SiteHeader />
