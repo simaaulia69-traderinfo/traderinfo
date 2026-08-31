@@ -3,6 +3,15 @@ import { NextResponse, type NextRequest } from "next/server";
 
 export async function middleware(request: NextRequest) {
   const response = NextResponse.next();
+  const hostname = request.headers.get("host")?.split(":")[0].toLowerCase();
+
+  if (hostname === "www.traderinfo.my.id") {
+    const redirectUrl = request.nextUrl.clone();
+    redirectUrl.hostname = "traderinfo.my.id";
+    redirectUrl.protocol = "https:";
+    return NextResponse.redirect(redirectUrl, 308);
+  }
+
   const isLoginRoute = request.nextUrl.pathname === "/admin/login";
   const isAdminRoute = request.nextUrl.pathname.startsWith("/admin") && !isLoginRoute;
 
