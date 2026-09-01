@@ -78,6 +78,7 @@ Artikel published masuk blog dan sitemap setelah revalidation. Meta keywords han
 - Robots: `https://traderinfo.my.id/robots.txt`
 - Draft tidak dimasukkan sitemap.
 - Artikel published memakai `lastModified`.
+- Verifikasi Google Search Console menggunakan meta tag pada root layout. Setelah deployment, buka Search Console dan klik Verify.
 - Publish/edit menjalankan revalidasi blog dan sitemap.
 - Publish mencoba melakukan ping sitemap ke Google.
 - Submit `sitemap.xml` pada Google Search Console setelah domain aktif.

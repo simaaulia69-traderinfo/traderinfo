@@ -22,6 +22,9 @@ export const metadata: Metadata = {
   },
   description:
     "TraderInfo adalah blog edukasi forex yang membahas strategi, analisis, dan manajemen risiko untuk trader Indonesia.",
+  verification: {
+    google: "DxRcOtFvxoQ-NoShHxFYkUWNJtlfYSSsWQmSkC0Dcos",
+  },
   openGraph: {
     type: "website",
     locale: "id_ID",
