@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { createBrowserSupabaseClient } from "@/lib/supabase";
 
 export function AdminSettings() {
   const [googleAnalyticsId, setGoogleAnalyticsId] = useState("");
@@ -19,9 +20,17 @@ export function AdminSettings() {
     setSaving(true);
     setStatus("");
 
+    const supabase = createBrowserSupabaseClient();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
     const response = await fetch("/api/settings", {
       method: "PUT",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        ...(session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {}),
+      },
+      credentials: "include",
       body: JSON.stringify({ googleAnalyticsId }),
     });
     const result = await response.json();

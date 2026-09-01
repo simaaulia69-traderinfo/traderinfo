@@ -5,6 +5,8 @@ export async function isAdminRequest(request: Request) {
     return false;
   }
 
+  const authorization = request.headers.get("authorization");
+  const bearerToken = authorization?.match(/^Bearer\s+(.+)$/i)?.[1];
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
@@ -31,7 +33,13 @@ export async function isAdminRequest(request: Request) {
 
   const {
     data: { user },
-  } = await supabase.auth.getUser();
+  } = bearerToken
+    ? await supabase.auth.getUser(bearerToken)
+    : await supabase.auth.getUser();
 
-  return Boolean(user && (!process.env.ADMIN_EMAIL || user.email === process.env.ADMIN_EMAIL));
+  return Boolean(
+    user &&
+      (!process.env.ADMIN_EMAIL ||
+        user.email?.trim().toLowerCase() === process.env.ADMIN_EMAIL.trim().toLowerCase())
+  );
 }
