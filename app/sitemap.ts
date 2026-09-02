@@ -1,6 +1,8 @@
 import type { MetadataRoute } from "next";
 import { getPublishedPosts } from "@/lib/data";
 
+export const revalidate = 3600;
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = "https://traderinfo.my.id";
   const posts = await getPublishedPosts();
