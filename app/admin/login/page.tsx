@@ -6,6 +6,9 @@ import { createBrowserSupabaseClient } from "@/lib/supabase";
 
 export default function AdminLoginPage() {
   const router = useRouter();
+  const hasSupabaseConfig = Boolean(
+    process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  );
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -17,9 +20,7 @@ export default function AdminLoginPage() {
     setError("");
 
     try {
-      const hasSupabaseConfig = Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
-
-      if (!hasSupabaseConfig) {
+      if (!hasSupabaseConfig && process.env.NODE_ENV !== "production") {
         document.cookie = "traderinfo_admin_session=true; path=/; max-age=86400; SameSite=Lax";
         router.push("/admin");
         router.refresh();
@@ -58,7 +59,7 @@ export default function AdminLoginPage() {
         <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">Admin</p>
         <h1 className="mt-4 text-3xl font-black tracking-tight text-slate-900">Login dashboard</h1>
         <p className="mt-2 text-sm text-slate-500">
-          {process.env.NEXT_PUBLIC_SUPABASE_URL ? "Live Supabase mode aktif." : "Mode preview lokal aktif: login demo otomatis diterima."}
+          {hasSupabaseConfig ? "Live Supabase mode aktif." : "Konfigurasi Supabase belum lengkap."}
         </p>
 
         <form onSubmit={handleSubmit} className="mt-6 space-y-5">

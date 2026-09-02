@@ -22,8 +22,12 @@ export async function middleware(request: NextRequest) {
     return response;
   }
 
-  if (!hasSupabaseConfig && localAdminSession) {
+  if (!hasSupabaseConfig && localAdminSession && process.env.NODE_ENV !== "production") {
     return response;
+  }
+
+  if (hasSupabaseConfig) {
+    response.cookies.delete("traderinfo_admin_session");
   }
 
   const supabase = createServerClient(
