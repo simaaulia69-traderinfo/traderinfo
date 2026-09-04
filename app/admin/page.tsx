@@ -14,7 +14,6 @@ export default function AdminDashboardPage() {
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const loadPosts = async () => {
-    setLoading(true);
     const response = await fetch("/api/posts");
     const data = await response.json();
     setPosts(data.posts ?? []);
@@ -22,7 +21,11 @@ export default function AdminDashboardPage() {
   };
 
   useEffect(() => {
-    loadPosts();
+    const timeoutId = window.setTimeout(() => {
+      void loadPosts();
+    }, 0);
+
+    return () => window.clearTimeout(timeoutId);
   }, []);
 
   const handleDelete = async (id: string) => {
@@ -35,6 +38,7 @@ export default function AdminDashboardPage() {
       alert("Gagal menghapus artikel.");
       return;
     }
+    setLoading(true);
     await loadPosts();
     router.refresh();
   };

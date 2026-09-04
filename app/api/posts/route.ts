@@ -40,17 +40,22 @@ export async function GET(request: Request) {
   }
 
   const supabase = createDatabaseClient();
-  let query: any = supabase.from("posts").select("*");
+  let data;
+  let error;
 
   if (slug) {
-    query = query.eq("slug", slug).maybeSingle();
+    const result = await supabase.from("posts").select("*").eq("slug", slug).maybeSingle();
+    data = result.data;
+    error = result.error;
   } else if (id) {
-    query = query.eq("id", id).maybeSingle();
+    const result = await supabase.from("posts").select("*").eq("id", id).maybeSingle();
+    data = result.data;
+    error = result.error;
   } else {
-    query = query.order("created_at", { ascending: false });
+    const result = await supabase.from("posts").select("*").order("created_at", { ascending: false });
+    data = result.data;
+    error = result.error;
   }
-
-  const { data, error } = await query;
 
   if (error) {
     return NextResponse.json({ success: false, message: error.message }, { status: 500 });
