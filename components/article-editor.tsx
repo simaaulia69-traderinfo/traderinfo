@@ -1,18 +1,15 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-
-const toolButtons = [
-  { label: "Bold", command: "bold" },
-  { label: "Italic", command: "italic" },
-  { label: "H1", command: "formatBlock", value: "h1" },
-  { label: "H2", command: "formatBlock", value: "h2" },
-  { label: "H3", command: "formatBlock", value: "h3" },
-  { label: "Paragraf", command: "formatBlock", value: "p" },
-  { label: "Bullet", command: "insertUnorderedList" },
-  { label: "Number", command: "insertOrderedList" },
-  { label: "Link", command: "createLink" },
-];
+import { EditorContent, useEditor } from "@tiptap/react";
+import StarterKit from "@tiptap/starter-kit";
+import Link from "@tiptap/extension-link";
+import Image from "@tiptap/extension-image";
+import TextAlign from "@tiptap/extension-text-align";
+import Underline from "@tiptap/extension-underline";
+import TaskList from "@tiptap/extension-task-list";
+import TaskItem from "@tiptap/extension-task-item";
+import { Table, TableCell, TableHeader, TableRow } from "@tiptap/extension-table";
 
 type ArticleEditorProps = {
   value: string;
@@ -21,119 +18,95 @@ type ArticleEditorProps = {
 };
 
 export function ArticleEditor({ value, onChange, onImageUpload }: ArticleEditorProps) {
-  const editorRef = useRef<HTMLDivElement | null>(null);
   const imageInputRef = useRef<HTMLInputElement | null>(null);
-  const selectionRef = useRef<Range | null>(null);
-  const [ready, setReady] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
+  const editor = useEditor({
+    extensions: [
+      StarterKit,
+      Underline,
+      Link.configure({ openOnClick: false, autolink: true }),
+      Image.configure({ allowBase64: false }),
+      TextAlign.configure({ types: ["heading", "paragraph"] }),
+      TaskList,
+      TaskItem.configure({ nested: true }),
+      Table.configure({ resizable: true }),
+      TableRow,
+      TableHeader,
+      TableCell,
+    ],
+    content: value,
+    immediatelyRender: false,
+    onUpdate: ({ editor: currentEditor }) => onChange(currentEditor.getHTML()),
+  });
 
   useEffect(() => {
-    if (editorRef.current && value !== editorRef.current.innerHTML) {
-      editorRef.current.innerHTML = value;
+    if (editor && value !== editor.getHTML()) {
+      editor.commands.setContent(value, { emitUpdate: false });
     }
-    setReady(true);
-  }, [value]);
+  }, [editor, value]);
 
-  const applyCommand = (command: string, valueArg?: string) => {
-    if (!editorRef.current) return;
+  if (!editor) {
+    return <div className="min-h-[360px] rounded-2xl border border-slate-200 bg-white p-4 text-sm text-slate-500">Memuat editor...</div>;
+  }
 
-    editorRef.current.focus();
-
-    if (command === "createLink") {
-      const url = window.prompt("Masukkan URL link", "https://");
-      if (!url) return;
-      restoreSelection();
-      document.execCommand(command, false, url);
-    } else if (command === "formatBlock") {
-      document.execCommand(command, false, `<${valueArg}>`);
-    } else {
-      document.execCommand(command, false, valueArg || undefined);
+  const setLink = () => {
+    const currentUrl = editor.getAttributes("link").href;
+    const url = window.prompt("Masukkan URL link", currentUrl || "https://");
+    if (url === null) return;
+    if (!url) {
+      editor.chain().focus().extendMarkRange("link").unsetLink().run();
+      return;
     }
-
-    onChange(editorRef.current.innerHTML);
-  };
-
-  const saveSelection = () => {
-    const selection = window.getSelection();
-    if (selection?.rangeCount && editorRef.current?.contains(selection.anchorNode)) {
-      selectionRef.current = selection.getRangeAt(0).cloneRange();
-    }
-  };
-
-  const restoreSelection = () => {
-    const selection = window.getSelection();
-    if (!selection || !selectionRef.current) return;
-    selection.removeAllRanges();
-    selection.addRange(selectionRef.current);
+    editor.chain().focus().extendMarkRange("link").setLink({ href: url, target: "_blank" }).run();
   };
 
   const handleImageSelected = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     event.target.value = "";
-    if (!file || !onImageUpload || !editorRef.current) return;
-
+    if (!file || !onImageUpload) return;
     setUploadingImage(true);
     const imageUrl = await onImageUpload(file);
     setUploadingImage(false);
-    if (!imageUrl) return;
-
-    editorRef.current.focus();
-    restoreSelection();
-    document.execCommand(
-      "insertHTML",
-      false,
-      `<img src="${imageUrl}" alt="${file.name.replace(/"/g, "")}" style="max-width:100%;height:auto;border-radius:16px;margin:1.5rem 0;" />`
-    );
-    onChange(editorRef.current.innerHTML);
+    if (imageUrl) {
+      editor.chain().focus().setImage({ src: imageUrl, alt: file.name }).run();
+    }
   };
+
+  const buttonClass = "rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-semibold text-slate-700 transition hover:border-slate-400 disabled:cursor-not-allowed disabled:opacity-50";
+  const run = (command: () => boolean) => command();
 
   return (
     <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white">
       <div className="flex flex-wrap gap-2 border-b border-slate-200 bg-slate-50 p-3">
-        {toolButtons.map((button) => (
-          <button
-            key={button.label}
-            type="button"
-            onMouseDown={(event) => {
-              event.preventDefault();
-              saveSelection();
-            }}
-            onClick={() => applyCommand(button.command, button.value)}
-            className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 transition hover:border-slate-300"
-          >
-            {button.label}
+        <button type="button" className={buttonClass} onClick={() => run(() => editor.chain().focus().toggleBold().run())}>Bold</button>
+        <button type="button" className={buttonClass} onClick={() => run(() => editor.chain().focus().toggleItalic().run())}>Italic</button>
+        <button type="button" className={buttonClass} onClick={() => run(() => editor.chain().focus().toggleUnderline().run())}>Underline</button>
+        <button type="button" className={buttonClass} onClick={() => run(() => editor.chain().focus().toggleStrike().run())}>Strike</button>
+        <button type="button" className={buttonClass} onClick={() => run(() => editor.chain().focus().toggleHeading({ level: 1 }).run())}>H1</button>
+        <button type="button" className={buttonClass} onClick={() => run(() => editor.chain().focus().toggleHeading({ level: 2 }).run())}>H2</button>
+        <button type="button" className={buttonClass} onClick={() => run(() => editor.chain().focus().toggleHeading({ level: 3 }).run())}>H3</button>
+        <button type="button" className={buttonClass} onClick={() => run(() => editor.chain().focus().setParagraph().run())}>P</button>
+        <button type="button" className={buttonClass} onClick={() => run(() => editor.chain().focus().toggleBulletList().run())}>Bullet</button>
+        <button type="button" className={buttonClass} onClick={() => run(() => editor.chain().focus().toggleOrderedList().run())}>Number</button>
+        <button type="button" className={buttonClass} onClick={() => run(() => editor.chain().focus().toggleTaskList().run())}>Checklist</button>
+        <button type="button" className={buttonClass} onClick={() => run(() => editor.chain().focus().toggleBlockquote().run())}>Quote</button>
+        <button type="button" className={buttonClass} onClick={() => run(() => editor.chain().focus().toggleCodeBlock().run())}>Code</button>
+        <button type="button" className={buttonClass} onClick={() => setLink()}>Link</button>
+        {(["left", "center", "right", "justify"] as const).map((alignment) => (
+          <button key={alignment} type="button" className={buttonClass} onClick={() => run(() => editor.chain().focus().setTextAlign(alignment).run())}>
+            {alignment === "left" ? "Kiri" : alignment === "center" ? "Tengah" : alignment === "right" ? "Kanan" : "Rata"}
           </button>
         ))}
-        <button
-          type="button"
-          onMouseDown={(event) => {
-            event.preventDefault();
-            saveSelection();
-          }}
-          onClick={() => imageInputRef.current?.click()}
-          disabled={uploadingImage || !onImageUpload}
-          className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-1.5 text-sm font-medium text-amber-800 transition hover:border-amber-300 disabled:cursor-not-allowed disabled:opacity-60"
-        >
+        <button type="button" className={buttonClass} onClick={() => run(() => editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run())}>+ Tabel</button>
+        <button type="button" className={buttonClass} onClick={() => run(() => editor.chain().focus().addRowAfter().run())} disabled={!editor.can().addRowAfter()}>+ Baris</button>
+        <button type="button" className={buttonClass} onClick={() => run(() => editor.chain().focus().addColumnAfter().run())} disabled={!editor.can().addColumnAfter()}>+ Kolom</button>
+        <button type="button" className={buttonClass} onClick={() => run(() => editor.chain().focus().deleteTable().run())} disabled={!editor.can().deleteTable()}>Hapus Tabel</button>
+        <button type="button" className="rounded-lg border border-amber-200 bg-amber-50 px-2.5 py-1.5 text-xs font-semibold text-amber-800 transition hover:border-amber-300 disabled:opacity-50" onClick={() => imageInputRef.current?.click()} disabled={uploadingImage || !onImageUpload}>
           {uploadingImage ? "Mengunggah..." : "Gambar"}
         </button>
-        <input
-          ref={imageInputRef}
-          type="file"
-          accept="image/*"
-          onChange={handleImageSelected}
-          className="hidden"
-        />
+        <input ref={imageInputRef} type="file" accept="image/*" onChange={handleImageSelected} className="hidden" />
       </div>
-
-      <div
-        ref={editorRef}
-        onMouseUp={saveSelection}
-        onKeyUp={saveSelection}
-        suppressContentEditableWarning
-        contentEditable={ready}
-        onInput={() => onChange(editorRef.current?.innerHTML ?? "")}
-        className="min-h-[280px] p-4 text-base leading-7 text-slate-700 focus:outline-none"
-      />
+      <EditorContent editor={editor} className="article-editor-content min-h-[360px] p-4 text-base leading-7 text-slate-700 focus:outline-none" />
     </div>
   );
 }

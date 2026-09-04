@@ -22,11 +22,18 @@ export function normalizeHtml(input: string) {
   const sanitized = sanitizeHtml(input, {
     allowedTags: [
       "p", "br", "strong", "b", "em", "i", "u", "s", "h1", "h2", "h3",
-      "ul", "ol", "li", "blockquote", "a", "img",
+      "ul", "ol", "li", "blockquote", "pre", "code", "hr", "a", "img",
+      "table", "thead", "tbody", "tr", "th", "td",
     ],
     allowedAttributes: {
       a: ["href", "target", "rel"],
       img: ["src", "alt", "width", "height", "style"],
+      p: ["style"],
+      h1: ["style"],
+      h2: ["style"],
+      h3: ["style"],
+      th: ["colspan", "rowspan"],
+      td: ["colspan", "rowspan"],
     },
     allowedSchemes: ["http", "https", "mailto"],
     allowedStyles: {
@@ -36,6 +43,10 @@ export function normalizeHtml(input: string) {
         "border-radius": [/^\d+px$/],
         margin: [/^[\d.]+rem\s+0$/],
       },
+      p: { "text-align": [/^(left|center|right|justify)$/] },
+      h1: { "text-align": [/^(left|center|right|justify)$/] },
+      h2: { "text-align": [/^(left|center|right|justify)$/] },
+      h3: { "text-align": [/^(left|center|right|justify)$/] },
     },
   }).trim();
 
