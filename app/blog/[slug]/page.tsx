@@ -8,6 +8,8 @@ import { buildArticleSchema } from "@/lib/seo";
 import { getPostBySlug } from "@/lib/data";
 import { formatDate } from "@/lib/utils";
 
+export const revalidate = 60;
+
 const shareLinks = [
   {
     href: "https://www.facebook.com/sharer/sharer.php?u=https://traderinfo.my.id",

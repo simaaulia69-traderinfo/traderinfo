@@ -21,7 +21,7 @@ export function formatDate(dateString: string) {
 export function normalizeHtml(input: string) {
   const sanitized = sanitizeHtml(input, {
     allowedTags: [
-      "p", "br", "strong", "b", "em", "i", "u", "s", "h2", "h3",
+      "p", "br", "strong", "b", "em", "i", "u", "s", "h1", "h2", "h3",
       "ul", "ol", "li", "blockquote", "a", "img",
     ],
     allowedAttributes: {

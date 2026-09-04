@@ -5,6 +5,8 @@ import { ArticleCard } from "@/components/article-card";
 import { SectionHeading } from "@/components/section-heading";
 import { getCategories, getPublishedPosts } from "@/lib/data";
 
+export const revalidate = 60;
+
 const featureCards = [
   {
     title: "Market insight",
