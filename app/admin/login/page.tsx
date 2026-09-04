@@ -45,7 +45,7 @@ export default function AdminLoginPage() {
         throw new Error("Sesi login tidak tersimpan. Silakan coba lagi.");
       }
 
-      window.location.assign("/admin");
+      router.push("/admin");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Login gagal. Pastikan data admin benar.");
     } finally {

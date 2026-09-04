@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { ArrowRight } from "lucide-react";
 import type { Post } from "@/lib/types";
 import { formatDate } from "@/lib/utils";
@@ -17,7 +18,7 @@ export function ArticleCard({ post }: { post: Post }) {
   return (
     <article className="group overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-[0_18px_45px_rgba(15,23,42,0.08)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_20px_50px_rgba(15,23,42,0.12)]">
       <div className="relative aspect-[16/10] overflow-hidden bg-gradient-to-br from-[#dfeaf5] via-[#edf3fb] to-[#fef3c7]">
-        <img src={cover} alt={post.title} className="h-full w-full object-cover transition duration-500 group-hover:scale-105" />
+        <Image src={cover} alt={post.title} fill sizes="(max-width: 768px) 100vw, 33vw" className="object-cover transition duration-500 group-hover:scale-105" />
         <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-slate-900/20 to-transparent" />
       </div>
 

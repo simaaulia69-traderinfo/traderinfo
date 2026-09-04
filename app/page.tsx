@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { ArrowRight, TrendingUp, ShieldCheck, BrainCircuit, Sparkles } from "lucide-react";
 import { AdSlot } from "@/components/ad-slot";
 import { ArticleCard } from "@/components/article-card";
@@ -96,8 +97,8 @@ export default async function HomePage() {
             <div className="grid gap-4 sm:grid-cols-3 md:grid-cols-1 xl:grid-cols-3">
               {featureCards.map((card) => (
                 <div key={card.title} className="overflow-hidden rounded-2xl border border-[#d8a24b]/20 bg-slate-900/40">
-                  <div className="h-24 overflow-hidden">
-                    <img src={card.image} alt={card.title} className="h-full w-full object-cover" />
+                  <div className="relative h-24 overflow-hidden">
+                    <Image src={card.image} alt={card.title} fill sizes="(max-width: 768px) 100vw, 33vw" className="object-cover" />
                   </div>
                   <div className="p-4">
                     {card.title === "Market insight" ? (
@@ -132,8 +133,8 @@ export default async function HomePage() {
             const categoryMeta = categoryCards.find((item) => item.name === category) ?? categoryCards[idx % categoryCards.length];
             return (
               <div key={category} className="overflow-hidden rounded-[24px] border border-slate-200 bg-white shadow-[0_18px_45px_rgba(15,23,42,0.05)] transition hover:-translate-y-1 hover:shadow-[0_20px_48px_rgba(15,23,42,0.08)]">
-                <div className="h-32 overflow-hidden">
-                  <img src={categoryMeta.image} alt={category} className="h-full w-full object-cover" />
+                <div className="relative h-32 overflow-hidden">
+                  <Image src={categoryMeta.image} alt={category} fill sizes="(max-width: 768px) 50vw, 25vw" className="object-cover" />
                 </div>
                 <div className="p-5">
                   <p className="text-xs font-semibold uppercase tracking-[0.15em] text-slate-500">Kategori</p>

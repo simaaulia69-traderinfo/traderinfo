@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import { Mail, MessageSquareShare, Share2, ThumbsUp, BadgeCheck } from "lucide-react";
 import { AdSlot } from "@/components/ad-slot";
@@ -86,7 +87,7 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
 
           {post.cover_image ? (
             <div className="mt-8 overflow-hidden rounded-[28px] border border-slate-200 bg-slate-100 shadow-sm">
-              <img src={post.cover_image} alt={post.title} className="h-[260px] w-full object-cover sm:h-[420px]" />
+              <Image src={post.cover_image} alt={post.title} width={1600} height={900} sizes="(max-width: 768px) 100vw, 960px" className="h-[260px] w-full object-cover sm:h-[420px]" />
             </div>
           ) : null}
 

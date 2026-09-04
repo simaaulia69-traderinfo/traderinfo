@@ -2,6 +2,7 @@
 
 import { Suspense, useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import Image from "next/image";
 import { createBrowserSupabaseClient } from "@/lib/supabase";
 import { ArticleEditor } from "@/components/article-editor";
 import { slugify } from "@/lib/utils";
@@ -217,7 +218,7 @@ function AdminEditorContent() {
         <div>
           <label className="mb-2 block text-sm font-semibold text-slate-700">Upload Gambar Sampul</label>
           <input type="file" accept="image/*" onChange={handleCoverUpload} className="w-full rounded-xl border border-dashed border-slate-300 bg-slate-50 p-3 text-sm" />
-          {coverImage ? <img src={coverImage} alt="Cover preview" className="mt-4 h-48 w-full rounded-2xl object-cover" /> : null}
+          {coverImage ? <Image src={coverImage} alt="Cover preview" width={1200} height={480} unoptimized className="mt-4 h-48 w-full rounded-2xl object-cover" /> : null}
         </div>
 
         <div>
