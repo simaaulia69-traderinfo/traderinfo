@@ -6,7 +6,7 @@ import { Mail, MessageSquareShare, Share2, ThumbsUp, BadgeCheck } from "lucide-r
 import { AdSlot } from "@/components/ad-slot";
 import { SchemaJsonLd } from "@/components/schema-jsonld";
 import { buildArticleSchema } from "@/lib/seo";
-import { getPostBySlug } from "@/lib/data";
+import { getPostBySlug, getPublishedPosts } from "@/lib/data";
 import { formatDate } from "@/lib/utils";
 
 export const revalidate = 60;
@@ -61,6 +61,13 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
     notFound();
   }
 
+  const publishedPosts = await getPublishedPosts();
+  const relatedPosts = publishedPosts
+    .filter((item) => item.slug !== post.slug && item.category === post.category)
+    .slice(0, 3);
+  const otherPosts = relatedPosts.length
+    ? relatedPosts
+    : publishedPosts.filter((item) => item.slug !== post.slug).slice(0, 3);
   const shareUrl = `https://traderinfo.my.id/blog/${post.slug}`;
 
   return (
@@ -161,6 +168,29 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
                   <Link href="/contact" className="block text-sm text-slate-700 hover:text-slate-900">
                     Hubungi kami
                   </Link>
+                </div>
+              </div>
+              <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+                <h3 className="text-sm font-semibold uppercase tracking-[0.15em] text-slate-500">
+                  Artikel terkait
+                </h3>
+                <div className="mt-3 space-y-3">
+                  {otherPosts.length ? (
+                    otherPosts.map((item) => (
+                      <Link
+                        key={item.slug}
+                        href={`/blog/${item.slug}`}
+                        className="block rounded-xl border border-slate-100 p-3 transition hover:border-[#d8a24b] hover:bg-amber-50/40"
+                      >
+                        <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-[#9a6a25]">
+                          {item.category}
+                        </p>
+                        <p className="mt-1 text-sm font-bold leading-5 text-slate-800">{item.title}</p>
+                      </Link>
+                    ))
+                  ) : (
+                    <p className="text-sm leading-6 text-slate-500">Belum ada artikel terkait.</p>
+                  )}
                 </div>
               </div>
             </aside>

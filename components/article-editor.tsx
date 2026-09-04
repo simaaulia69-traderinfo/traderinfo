@@ -77,7 +77,7 @@ export function ArticleEditor({ value, onChange, onImageUpload }: ArticleEditorP
 
   return (
     <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white">
-      <div className="flex flex-wrap gap-2 border-b border-slate-200 bg-slate-50 p-3">
+      <div className="sticky top-0 z-20 flex flex-wrap gap-2 border-b border-slate-200 bg-slate-50/95 p-3 shadow-sm backdrop-blur">
         <button type="button" className={buttonClass} onClick={() => run(() => editor.chain().focus().toggleBold().run())}>Bold</button>
         <button type="button" className={buttonClass} onClick={() => run(() => editor.chain().focus().toggleItalic().run())}>Italic</button>
         <button type="button" className={buttonClass} onClick={() => run(() => editor.chain().focus().toggleUnderline().run())}>Underline</button>
